@@ -27,10 +27,15 @@ export default function CognitiveLoadMonitor({
   const [loadLevel, setLoadLevel] = useState<LoadLevel>("medium");
   const scrollVelocities = useRef<number[]>([]);
   const lastScrollY = useRef(0);
-  const lastScrollTime = useRef(Date.now());
+  const lastScrollTime = useRef(0);
   const tabSwitchCount = useRef(0);
-  const lastInteraction = useRef(Date.now());
+  const lastInteraction = useRef(0);
   const interactionGaps = useRef<number[]>([]);
+
+  useEffect(() => {
+    lastScrollTime.current = Date.now();
+    lastInteraction.current = Date.now();
+  }, []);
 
   const updateLoad = useCallback(() => {
     // Scroll velocity analysis — last 10 readings

@@ -52,6 +52,38 @@ The output is optimized for reading, not for deciding. There is no structure tha
 
 ---
 
+## The Quality Perception Gap: Why "Good Output" Feels Better Than It Is
+
+PEC is ultimately a gap between two things: **actual output quality** and **perceived output quality**. Understanding this gap is essential to understanding why the trust problem persists despite genuinely improving AI capabilities.
+
+**Actual output quality** is multi-dimensional. It includes correctness (are the facts right?), completeness (what's missing?), reasoning quality (are the inferences valid?), usefulness (does this help *my* decision?), and uncertainty (where is the evidence thin?). No single metric captures all of these, and "good output" is inherently contextual — the same response can be excellent for one user's decision and dangerously inadequate for another's.
+
+**Perceived output quality** is what the user *feels* about the response. And here is the structural problem: Perplexity's current answer format is engineered — unintentionally — to maximize perceived quality while leaving actual quality uninspected.
+
+The evidence for this gap is concrete:
+
+| Quality Dimension | Actual State | What User Perceives | Gap |
+|---|---|---|---|
+| **Correctness** | 37% error rate on systematic tests (Tow Center 2025) | "It has 21 citations — it must be well-researched" | Users perceive high correctness because citation density signals diligence |
+| **Completeness** | Critical gaps often unmentioned (device class, jurisdiction, risk tolerance) | "The answer covers everything I need" | Polished prose creates an illusion of completeness; users don't know what's missing |
+| **Reasoning quality** | Inferences presented in the same voice as sourced facts | "All of these claims seem equally reliable" | Users cannot distinguish fact from synthesis because the prose style is identical |
+| **Usefulness** | Generic response not tailored to user's specific decision context | "This is a great answer" | Users judge quality in the abstract, not against their actual decision criteria |
+| **Uncertainty** | Source conflicts exist but are silently resolved into a single narrative | "The sources agree" | Users never see the disagreements that were collapsed during synthesis |
+
+The Pro tier makes this gap *worse*, not better. Tow Center found that Pro responses are more definitive when wrong — meaning the paid product actively widens the gap between actual and perceived quality for the users who need accuracy most.
+
+**This is the gap PDBP is designed to close.** Each solution directly attacks a dimension of the quality perception gap:
+
+- **Intent Contract** closes the usefulness gap by forcing the user to define what "good" means for *their* decision before the answer can define it for them.
+- **Decision Brief** closes the correctness and reasoning gaps by separating sourced facts from inferences and making the reasoning chain inspectable.
+- **Epistemic Fork** closes the uncertainty gap by showing that the same evidence supports multiple interpretations.
+- **Calibrated Commit** *measures* the perception gap directly — the delta between the user's confidence rating and the actual evidence strength *is* the quality perception gap, quantified per-claim.
+- **Research Debt** closes the completeness gap by making the invisible visible: what has been inspected, what remains unresolved, what was never retrieved.
+
+No competitor measures or addresses this gap. They either try to improve actual output quality (better models, better retrieval) or they try to signal quality to the user (trust scores, confidence labels). Nobody addresses the structural mismatch between the two.
+
+---
+
 ## The Five Judgment Failures Caused by PEC
 
 PEC is the disease. These are the symptoms:
@@ -115,17 +147,17 @@ Here is how the five map:
 
 **What it does:** For queries flagged as irreversible stakes, the system generates two defensible syntheses from the same source set — a conservative reading (emphasizing uncertainty, conflicts, oldest corroborated claims) and an expansive reading (emphasizing opportunity, convergent trends, forward projections). The user must select one and write a sentence explaining their choice.
 
-**Why it works:** It breaks the single-narrative illusion that causes J1 (treating all claims as equally reliable). The mandatory rationale sentence is the critical design choice — articulating "why I chose this frame" is where judgment skill develops.
+**Why it works:** It breaks the single-narrative illusion that causes J1 (treating all claims as equally reliable). By showing two honest readings side by side, the Fork explicitly preserves ambiguity where ambiguity naturally exists — rather than collapsing it into false certainty the way a standard AI essay does. The different interpretations also surface the assumptions embedded in each reading: the conservative fork makes visible what uncertainties exist, while the expansive fork makes visible what forward projections are being assumed. The mandatory rationale sentence is the critical design choice — articulating "why I chose this frame" is where judgment skill develops.
 
-**What no competitor does:** No consumer AI search product shows two honest readings from the same evidence. This is structurally novel.
+**What no competitor does:** No consumer AI search product shows two honest readings from the same evidence. No product asks the user to examine their own assumptions by choosing between interpretations. This is structurally novel.
 
 ### Solution 3: Calibrated Commit Protocol
 
 **What it does:** Before the user can export, share, or take action on high-stakes research, the system shows 3–5 key claims without source labels or claim types. The user rates their confidence (1–5) per claim. The system then reveals claim type, source quality, and any mismatch alerts. The user sees their calibration delta and writes a brief rationale.
 
-**Why it works:** This is the only mechanism that measurably builds the user's evaluation skill over time. Inspired by meteorological calibration training (where forecasters improve accuracy through structured confidence feedback), it turns every Perplexity session into a micro-training exercise.
+**Why it works:** This is the only mechanism that measurably builds the user's evaluation skill over time. Inspired by meteorological calibration training (where forecasters improve accuracy through structured confidence feedback), it turns every Perplexity session into a micro-training exercise. Critically, the Calibrated Commit catches both failure modes: **overconfidence** (rating a weakly-sourced inference as 5/5) *and* **underconfidence** (rating a well-supported factual claim as 1/5). Users who are excessively skeptical of AI outputs lose productivity just as users who blindly trust them make poor decisions. The calibration delta tracks both directions, and the Calibration Dashboard surfaces personal patterns over time — showing whether a user tends to over-trust inferential claims or under-trust factual ones.
 
-**What no competitor does:** No search product implements a pre-commitment gate that reveals calibration gaps.
+**What no competitor does:** No search product implements a pre-commitment gate that reveals calibration gaps in both directions — overconfidence and underconfidence.
 
 ### Solution 4: Research Debt Quantifier
 
@@ -142,6 +174,24 @@ Here is how the five map:
 **Why it works:** Solutions 1–4 change the answer format. Solution 5 changes the user. Over weeks and months, users who engage with Epistemic Fitness exercises become measurably better evaluators. The before/after measurement is built into the product: "You started detecting unsupported claims 40% of the time. After 4 weeks: 78%."
 
 **What no competitor does:** No product exists — in AI search or anywhere else — that trains users to become better evaluators of AI outputs through gamified daily practice.
+
+---
+
+## How the Decision Brief Makes AI Reasoning Legible
+
+A core design principle of PDBP is that the system must never become another opaque black box. Every layer of the Decision Brief is designed to make the AI's reasoning visible and inspectable:
+
+1. **Claim type labels** — Every claim carries a visible tag: Factual (directly sourced), Inferential (synthesized across sources), or Normative (a value judgment). Users always know what *kind* of claim they are reading, because an inference presented as fact is the most common source of misjudgment.
+
+2. **Reasoning chains** — For inferred conclusions, the Brief shows the explicit reasoning path: which sources were combined, what logic was applied, and what assumptions were made. Example: *"Sources [2][3] emphasize enterprise velocity; consumer share inferred from segment split in [1]."* The user can trace the AI's logic and disagree with any step.
+
+3. **Explicit assumptions** — Each inference surfaces its embedded assumptions. When the Brief says "Enterprise adoption is the primary growth driver," the reasoning chain reveals: this assumes no platform consolidation, this is based on a single analyst's CAGR, and the user's specific B2B vs. consumer context was not specified. Assumptions are visible, not hidden.
+
+4. **Honest gaps** — The "Not Addressed" section is the most radical transparency feature. Instead of pretending the Brief covers everything, the AI explicitly flags what it could not or did not retrieve. This makes the AI's source selection choices visible: if something important is missing, the user knows.
+
+5. **Source disagreement map** — When retrieved sources conflict, the Brief shows both positions side by side without picking a winner. This makes the AI's editorial choices (or non-choices) transparent: the user sees where the evidence base is genuinely uncertain.
+
+This legibility architecture ensures that PDBP is not "AI evaluating AI in a black box." It is the AI showing its work — claim by claim, source by source, assumption by assumption — so the human can evaluate the evaluation.
 
 ---
 

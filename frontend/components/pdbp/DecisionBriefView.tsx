@@ -1,11 +1,10 @@
 "use client";
 
-import { DecisionBrief, Source } from "@/lib/types";
+import { DecisionBrief } from "@/lib/types";
 import { claimTypeColor, claimTypeLabel } from "@/lib/utils";
 
 interface DecisionBriefViewProps {
   brief: DecisionBrief;
-  sources: Source[];
   onCitationClick?: (id: number) => void;
   showNarrative?: boolean;
   onToggleNarrative?: () => void;
@@ -13,7 +12,6 @@ interface DecisionBriefViewProps {
 
 export default function DecisionBriefView({
   brief,
-  sources,
   onCitationClick,
   showNarrative,
   onToggleNarrative,

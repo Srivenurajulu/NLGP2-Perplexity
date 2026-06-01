@@ -1,4 +1,4 @@
-import SearchResults from "@/components/SearchResults";
+import UnifiedProtocol from "@/components/pdbp/UnifiedProtocol";
 import { DEMO_QUERIES } from "@/lib/mock/pdbp-data";
 
 interface SearchPageProps {
@@ -15,5 +15,5 @@ export default async function SearchPage({ params }: SearchPageProps) {
   const { query } = await params;
   const decodedQuery = decodeURIComponent(query);
 
-  return <SearchResults query={decodedQuery} />;
+  return <UnifiedProtocol query={decodedQuery} />;
 }

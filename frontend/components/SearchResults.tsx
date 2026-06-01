@@ -26,12 +26,14 @@ export default function SearchResults({ query }: SearchResultsProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [contract, setContract] = useState<IntentContract | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [showContractModal, setShowContractModal] = useState(false);
   const [showCommitGate, setShowCommitGate] = useState(false);
   const [commitDone, setCommitDone] = useState(false);
   const [forkDone, setForkDone] = useState(false);
   const [showNarrative, setShowNarrative] = useState(false);
   const [highlightedSource, setHighlightedSource] = useState<number | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [cognitiveLoad, setCognitiveLoad] = useState<LoadLevel>("medium");
   const [sourcesInspected, setSourcesInspected] = useState<Set<number>>(new Set());
 
@@ -97,9 +99,9 @@ export default function SearchResults({ query }: SearchResultsProps) {
         <div className="min-h-screen bg-[var(--background)]">
           <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--background)]/95 backdrop-blur-sm">
             <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-4">
-              <a href="/" className="flex items-center gap-2 shrink-0">
+              <Link href="/" className="flex items-center gap-2 shrink-0">
                 <Logo />
-              </a>
+              </Link>
               <div className="flex-1 max-w-2xl">
                 <SearchBar initialQuery={query} compact />
               </div>
@@ -110,6 +112,16 @@ export default function SearchResults({ query }: SearchResultsProps) {
           <main className="max-w-7xl mx-auto px-4 py-6">
             {loading && <LoadingState query={query} />}
             {error && <p className="text-center py-20 text-red-500">{error}</p>}
+
+            {data && !contract && !loading && (
+              <div className="max-w-xl mx-auto py-8">
+                <IntentContractModal
+                  query={query}
+                  initial={data.decisionBrief.intentContract}
+                  onSubmit={handleContractSubmit}
+                />
+              </div>
+            )}
 
             {data && brief && contract && !loading && (
               <>
@@ -156,6 +168,18 @@ export default function SearchResults({ query }: SearchResultsProps) {
 
                 <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8">
                   <div className="space-y-6">
+                    {showCommitGate && (
+                      <CalibratedCommitGate
+                        blindClaims={brief.calibratedCommit.blindClaims}
+                        reveals={brief.calibratedCommit.reveals}
+                        onComplete={() => {
+                          setCommitDone(true);
+                          setShowCommitGate(false);
+                        }}
+                        onClose={() => setShowCommitGate(false)}
+                      />
+                    )}
+
                     {needsFork && brief.epistemicFork && (
                       <EpistemicForkSelector
                         fork={brief.epistemicFork}
@@ -192,7 +216,6 @@ export default function SearchResults({ query }: SearchResultsProps) {
                     ) : (
                       <DecisionBriefView
                         brief={brief}
-                        sources={data.sources}
                         onCitationClick={handleCitationClick}
                         showNarrative={showNarrative}
                         onToggleNarrative={() => setShowNarrative(!showNarrative)}
@@ -222,26 +245,6 @@ export default function SearchResults({ query }: SearchResultsProps) {
               </>
             )}
           </main>
-
-          {showContractModal && data && (
-            <IntentContractModal
-              query={query}
-              initial={data.decisionBrief.intentContract}
-              onSubmit={handleContractSubmit}
-            />
-          )}
-
-          {showCommitGate && brief && (
-            <CalibratedCommitGate
-              blindClaims={brief.calibratedCommit.blindClaims}
-              reveals={brief.calibratedCommit.reveals}
-              onComplete={() => {
-                setCommitDone(true);
-                setShowCommitGate(false);
-              }}
-              onClose={() => setShowCommitGate(false)}
-            />
-          )}
         </div>
       )}
     </CognitiveLoadMonitor>

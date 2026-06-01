@@ -73,18 +73,21 @@ Open [http://localhost:3000](http://localhost:3000)
 ## Project Structure
 
 ```
-docs/ARCHITECTURE.md          # Full product architecture (v2, award-grade depth)
+docs/ARCHITECTURE.md          # Full product architecture (v3, award-grade depth)
 docs/PROBLEM_STATEMENT.md     # Problem statement, 5 solutions rationale, risk assessment
+docs/solv3.md                 # Solution v3 design narrative
 research/survey-summary.md    # User research + PDBP mapping
 frontend/                     # Perplexity UI + PDBP interactive demo
   app/
     page.tsx                  # Home page with all protocol modules
-    search/[query]/page.tsx   # Decision Brief view (Solutions 1-4 integrated)
+    search/[query]/page.tsx   # Unified Protocol view (all 5 solutions inline)
     fitness/page.tsx          # Epistemic Fitness trainer (Solution 5)
     calibration/page.tsx      # AI Confidence Calibration Engine
-    api/search/route.ts       # Mock search API
   components/
     pdbp/
+      UnifiedProtocol.tsx          # 5-phase inline orchestrator (v2/v3)
+      PhaseProgressBar.tsx         # Phase progress + collapsed cards
+      SessionSummary.tsx           # Phase 5: REFLECT + mini fitness
       IntentContractModal.tsx      # Solution 1: Intent Contract
       EpistemicForkSelector.tsx    # Solution 2: Epistemic Fork
       CalibratedCommitGate.tsx     # Solution 3: Calibrated Commit

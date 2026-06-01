@@ -114,6 +114,7 @@ export default function ResearchDebtMeter({
       if (progress < 1) requestAnimationFrame(animate);
     }
     requestAnimationFrame(animate);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rawScore]);
 
   const scoreColor =

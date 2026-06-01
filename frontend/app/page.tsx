@@ -121,7 +121,7 @@ export default function HomePage() {
                   href={`/search/${encodeURIComponent(q)}`}
                   className="text-xs px-3 py-2 rounded-full border border-[var(--border)] bg-[var(--surface)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors"
                 >
-                  {q.length > 48 ? `${q.slice(0, 48)}...` : q}
+                  {q}
                 </a>
               ))}
             </div>
@@ -181,7 +181,7 @@ export default function HomePage() {
       <footer className="py-4 text-center text-[10px] text-[var(--muted)]">
         NL Graduation Project ·{" "}
         <a href="/docs/ARCHITECTURE.md" className="text-[var(--accent)] hover:underline">
-          Architecture v2
+          Architecture v3
         </a>{" "}
         ·{" "}
         <a href="/docs/PROBLEM_STATEMENT.md" className="text-[var(--accent)] hover:underline">

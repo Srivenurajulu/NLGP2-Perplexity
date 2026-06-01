@@ -2,7 +2,7 @@
 
 **Growth Team Product Architecture**  
 **Product:** Perplexity AI  
-**Version:** 2.0  
+**Version:** 3.0  
 **Date:** May 2026  
 **Status:** Proposed Solution (Award-Grade)
 
@@ -67,6 +67,27 @@ PDBP does not assign trust scores, replace human judgment, or hide behind a seco
 
 **Gap:** No product ties output format to *user decision context* and *calibration training*.
 
+### 1.3 The Quality Perception Gap
+
+The trust problem persists because of a structural mismatch between **actual output quality** and **perceived output quality**. Current AI search products are unintentionally designed to maximize perceived quality while leaving actual quality uninspected.
+
+| Quality Dimension | Actual State | What User Perceives | Structural Cause |
+|---|---|---|---|
+| Correctness | 37% error rate (Tow Center) | "21 citations = well-researched" | Citation density signals diligence |
+| Completeness | Critical gaps unmentioned | "Covers everything I need" | Polished prose creates illusion of completeness |
+| Reasoning | Inferences = same voice as facts | "All claims equally reliable" | No visual/structural distinction between claim types |
+| Usefulness | Generic, not decision-tailored | "Great answer" | Users judge quality abstractly, not against their decision |
+| Uncertainty | Source conflicts silently collapsed | "Sources agree" | Single-narrative synthesis hides disagreements |
+
+**Key finding:** Pro tier *widens* this gap. Tow Center showed Pro is more definitive when wrong — the users paying for rigor get higher perceived quality and lower actual quality.
+
+**PDBP directly closes each dimension of this gap:**
+- Intent Contract → usefulness gap (defines what "good" means for this user)
+- Decision Brief → correctness + reasoning gaps (separates fact from inference)
+- Epistemic Fork → uncertainty gap (surfaces multiple valid readings)
+- Calibrated Commit → *measures* the gap per-claim (confidence rating vs. evidence strength)
+- Research Debt → completeness gap (makes missing work visible)
+
 ---
 
 ## 2. Business Outcomes
@@ -118,14 +139,15 @@ flowchart LR
     end
 ```
 
-| Stage | Today breakdown | PDBP intervention |
-|-------|-----------------|-------------------|
-| Intent | Unstated stakes | Intent Contract (15s) |
-| Prompting | Generic retrieval | Contract-weighted retrieval |
-| Output | Essay closure | Decision Brief resists closure |
-| Evaluation | Gut feel | Calibrated Commit |
-| Action | Unlogged judgment | Commit record + optional Fork choice |
+### 3.1 Customer Journey Map
 
+| Stage | User Actions | Emotions / Thoughts | Pain Points (Current State) | PDBP Intervention |
+|-------|--------------|---------------------|-----------------------------|-------------------|
+| **1. Intent** | User faces a high-stakes decision and formulates a query. | *Anxious but hopeful.* "I need the right answer quickly so I can move forward." | Unstated stakes. User treats a board-level query the same as a trivia search. | **Intent Contract (15s)** forces the user to articulate the decision, stakes, and what "good enough" looks like. |
+| **2. Prompting & Retrieval** | User submits the query and waits for the AI to synthesize information. | *Passive.* Expecting the system to do the heavy lifting of evaluating sources. | Generic retrieval optimizes for general summaries, not the user's specific context. | **Contract-weighted retrieval** uses the Intent Contract to filter for relevance to the user's specific decision. |
+| **3. Output & Review** | User reads the generated response and glances at citation badges. | *Satisfied.* "This looks polished and authoritative. It has 20 citations." | **Premature Epistemic Closure.** The essay format hides gaps and unverified inferences behind fluent prose. | **Decision Brief** resists closure. Splits claims into Sourced vs Inferred, lists "Not Addressed", and ranks Verification Duties. |
+| **4. Evaluation** | User decides whether to trust the response enough to act on it. | *Overconfident.* "The AI said it clearly, so it must be right." | Gut feel replaces critical evaluation. No feedback loop for trust calibration. | **Calibrated Commit** forces users to rate their confidence on key claims *before* seeing the evidence structure, revealing their calibration delta. |
+| **5. Action** | User copies the response into a memo, email, or presentation. | *Relieved.* "Done. I have what I need to make the decision." | No audit trail of why the user trusted the output. Action taken on unverified inferences. | **Epistemic Fork** (for irreversible stakes) requires selecting between two defensible readings and documenting the rationale before export. |
 ---
 
 ## 4. Target Segment
@@ -463,23 +485,235 @@ sequenceDiagram
 
 ## 9. Metrics
 
-| Type | Metric | 6-mo target |
-|------|--------|-------------|
-| **North Star** | Judgment-Ready Session Rate (JRSR) | 32% |
-| **Leading** | Intent Contract completion rate | 55% of Pro high-stakes |
-| **Leading** | Verification duty click-through | +50% vs citation CTR baseline |
-| **Leading** | Calibration delta narrowing (repeat users) | 15% improvement |
-| **Leading** | Fork completion rate (irreversible) | 70% |
-| **Guardrail** | p95 time-to-brief | <8s added vs essay |
-| **Guardrail** | Session abandonment | No >5% increase |
-| **Guardrail** | Quick-answer escape rate | <40% on irreversible (signals friction) |
-| **Guardrail** | Self-reported harm incidents | Downward trend |
+### 9.1 KPI Tree
+
+The KPI tree shows how individual feature metrics (leaves) flow upward into the North Star metric (JRSR), which in turn drives business outcomes. Guardrails prevent us from optimizing the wrong thing.
+
+```mermaid
+flowchart LR
+    subgraph BIZ["🏢 Business Outcomes"]
+        TRUST["Durable User Trust"]
+        CONVERT["Pro/Enterprise Conversion"]
+        RETAIN["Pro Retention Rate"]
+    end
+
+    subgraph NORTH["⭐ North Star"]
+        JRSR["JRSR: Judgment-Ready Session Rate<br/>Target: 32% at 6 months"]
+    end
+
+    TRUST --> JRSR
+    CONVERT --> JRSR
+    RETAIN --> JRSR
+
+    subgraph LEADING["📊 Leading Metrics"]
+        IC["📋 Intent Contract Completion<br/>Target: 55%"]
+        VD["🔍 Verification Duty CTR<br/>Target: +50% vs baseline"]
+        CD["🎯 Calibration Delta Narrowing<br/>Target: 15% improvement"]
+        FC["🔀 Fork Completion Rate<br/>Target: 70%"]
+        EF["⚡ Fitness Engagement<br/>Target: 15-20% weekly"]
+    end
+
+    JRSR --> IC
+    JRSR --> VD
+    JRSR --> CD
+    JRSR --> FC
+    JRSR --> EF
+
+    subgraph LEAF1["Intent Contract Leaves"]
+        IC1["Contract edit rate"]
+        IC2["Contract abandon rate"]
+        IC3["Stakes accuracy"]
+    end
+
+    subgraph LEAF2["Verification Leaves"]
+        VD1["Citation CTR per source"]
+        VD2["Disagreement resolution"]
+        VD3["Not Addressed acknowledged"]
+    end
+
+    subgraph LEAF3["Calibration Leaves"]
+        CD1["Overconfidence flags"]
+        CD2["Underconfidence flags"]
+        CD3["Rationale quality"]
+    end
+
+    subgraph LEAF4["Fork Leaves"]
+        FC1["Rationale length"]
+        FC2["Conservative vs Expansive split"]
+    end
+
+    subgraph LEAF5["Fitness Leaves"]
+        EF1["Session completion rate"]
+        EF2["Claim typing accuracy"]
+        EF3["Streak retention"]
+    end
+
+    IC --> IC1
+    IC --> IC2
+    IC --> IC3
+    VD --> VD1
+    VD --> VD2
+    VD --> VD3
+    CD --> CD1
+    CD --> CD2
+    CD --> CD3
+    FC --> FC1
+    FC --> FC2
+    EF --> EF1
+    EF --> EF2
+    EF --> EF3
+
+    subgraph GUARD["🛡 Guardrails"]
+        G1["Session abandonment<br/>No >5% increase"]
+        G2["p95 time-to-brief<br/>< 8s added"]
+        G3["Escape rate<br/>< 40% irreversible"]
+        G4["Self-reported harm<br/>Downward trend"]
+    end
+
+    JRSR -.-> G1
+    JRSR -.-> G2
+    JRSR -.-> G3
+    JRSR -.-> G4
+
+    style JRSR fill:#6366f1,color:#fff,stroke:#4f46e5,stroke-width:3px
+    style BIZ fill:#059669,color:#fff,stroke:#047857,stroke-width:2px
+    style GUARD fill:#fef3c7,stroke:#d97706,stroke-width:2px
+    style NORTH fill:#eef2ff,stroke:#6366f1,stroke-width:2px
+    style LEADING fill:#f0fdf4,stroke:#059669,stroke-width:1px
+```
+
+### 9.2 Metric Definitions
+
+| Type | Metric | Definition | 6-mo Target |
+|------|--------|------------|-------------|
+| **North Star** | Judgment-Ready Session Rate (JRSR) | % of Pro sessions where user completes Intent Contract + reviews verification duties + completes Calibrated Commit on ≥3 claims before export/share/external action | 32% |
+| **Leading** | Intent Contract completion rate | % of Pro high-stakes sessions where user submits a contract (not skipped or abandoned) | 55% |
+| **Leading** | Verification duty click-through | % of listed verification duties where user clicks at least one related citation | +50% vs citation CTR baseline |
+| **Leading** | Calibration delta narrowing | Average reduction in |user confidence rating − evidence strength| for repeat users over 4 weeks | 15% improvement |
+| **Leading** | Fork completion rate | % of irreversible-stakes sessions where user selects a fork and writes rationale | 70% |
+| **Leading** | Epistemic Fitness engagement | % of Pro users completing ≥1 fitness session per week after first month | 15-20% |
+| **Guardrail** | p95 time-to-brief | 95th percentile latency added by Decision Brief vs legacy essay | <8s added |
+| **Guardrail** | Session abandonment | % of sessions abandoned after Intent Contract or Brief loads | No >5% increase |
+| **Guardrail** | Quick-answer escape rate | % of irreversible-stakes sessions where user clicks "Show legacy essay" | <40% |
+| **Guardrail** | Self-reported harm | User-reported incidents where AI output led to poor decisions | Downward trend |
+
+### 9.3 How Each PDBP Solution Moves the KPI Tree
+
+| Solution | Primary Metric It Moves | Secondary Metrics | Guardrail It Risks |
+|----------|------------------------|-------------------|-------------------|
+| **Intent Contract** | IC completion rate → JRSR | Stakes accuracy, Contract edit rate | Session abandonment (friction) |
+| **Decision Brief** | Verification duty CTR → JRSR | Citation click-through, Not Addressed acknowledgment | Time-to-brief (latency) |
+| **Epistemic Fork** | Fork completion rate → JRSR | Rationale quality, Conservative/Expansive split | Quick-answer escape (friction) |
+| **Calibrated Commit** | Calibration delta narrowing → JRSR | Over/underconfidence flags, Rationale quality | Session abandonment (extra step) |
+| **Research Debt** | Verification duty CTR → JRSR | Source disagreement resolution, Citation CTR | — (passive meter, low risk) |
+| **Epistemic Fitness** | Fitness engagement → long-term JRSR | Claim typing accuracy, Streak retention | Engagement drop after novelty |
+
+### 9.4 Experiment Plan
+
+| Phase | Scope | Duration | Success Criteria to Proceed |
+|-------|-------|----------|---------------------------|
+| **Phase 1: Dogfood** | Internal team (n=10) | 2 weeks | No critical UX blockers; >60% contract completion |
+| **Phase 2: Alpha** | 5% of Pro users (random) | 4 weeks | JRSR ≥15%; abandonment <5% increase |
+| **Phase 3: Beta** | 25% of Pro users | 6 weeks | JRSR ≥25%; calibration delta narrowing ≥10% |
+| **Phase 4: GA** | All Pro users (essay mode available as toggle) | Ongoing | JRSR ≥32%; Pro conversion lift ≥5% |
+
+Qualitative cohort: n=20 structured interviews at Phase 2 and Phase 3 transitions, focused on decision quality and perceived friction.
 
 **Experiment plan:** 5% Pro A/B → 25% → GA. Qualitative cohort n=20 for decision quality interviews.
 
 ---
 
-## 10. Why PDBP Might Fail
+## 10. Target User Personas
+
+Based on our research (survey n=5, desk research, behavioral patterns), we define three primary personas:
+
+### Persona 1: Priya — The Regulatory Lead
+
+| Attribute | Detail |
+|-----------|--------|
+| **Role** | Regulatory Affairs Lead, MedTech startup (Series B) |
+| **Stakes** | Irreversible — her FDA filing decision affects the company's 18-month runway |
+| **Behavior** | Uses Perplexity Pro 3x/day for regulatory research; trusts citation density as quality proxy |
+| **Pain point** | "I cited a Perplexity response in a regulatory memo. Six months later we discovered the PCCP guidance was draft, not final. Nobody flagged that." |
+| **What she needs** | Explicit claim typing (fact vs. inference vs. draft), forced verification duties before she can share externally, and a record of what she trusted and why |
+| **PDBP match** | Full 5-phase protocol: Intent Contract → Decision Brief → Epistemic Fork → Calibrated Commit → Research Debt |
+
+### Persona 2: Raj — The Strategy Analyst
+
+| Attribute | Detail |
+|-----------|--------|
+| **Role** | Strategy Analyst, Enterprise SaaS company |
+| **Stakes** | Operational — his market sizing feeds board presentations and budget decisions |
+| **Behavior** | Searches 5-8 queries per research session; copies responses into Google Docs; rarely inspects individual sources |
+| **Pain point** | "I put '$28.4B market size' in a board deck. My VP asked where it came from. I said 'Perplexity.' That wasn't good enough." |
+| **What she needs** | Source quality visibility, clear distinction between analyst consensus and single-source projections, and an audit trail for shared claims |
+| **PDBP match** | 4-phase protocol (Fork skipped): Intent Contract → Decision Brief → Calibrated Commit → Research Debt |
+
+### Persona 3: Amit — The Exploring Graduate
+
+| Attribute | Detail |
+|-----------|--------|
+| **Role** | Graduate student exploring career options and interview prep |
+| **Stakes** | Exploratory to Irreversible (career decisions are high-stakes but not always recognized as such) |
+| **Behavior** | Uses free tier; treats Perplexity like a smarter Google; accepts first answer without questioning |
+| **Pain point** | "I followed Perplexity's interview prep advice exactly. The actual loop was completely different. I wish it had told me the advice was generic." |
+| **What she needs** | Awareness that AI responses are starting points, not finish lines; gradual skill-building through Epistemic Fitness |
+| **PDBP match** | Epistemic Fitness as entry point → light protocol on operational queries → full protocol as stakes increase |
+
+---
+
+## 11. Go-To-Market Strategy
+
+### 11.1 Launch Sequence
+
+PDBP is not a single feature launch. It is a **protocol** that must be introduced in stages to avoid friction overload. Each solution ships incrementally:
+
+| Wave | Solutions | Timeline | Target Users | Success Gate |
+|------|-----------|----------|-------------|-------------|
+| **Wave 1: Foundation** | Intent Contract + Decision Brief | Weeks 1-4 | 5% Pro users (A/B test) | Contract completion ≥55%; abandonment <5% increase |
+| **Wave 2: Calibration** | Calibrated Commit + Research Debt | Weeks 5-8 | Same 5% cohort | JRSR ≥15%; calibration delta measurable |
+| **Wave 3: High-Stakes** | Epistemic Fork (irreversible only) | Weeks 9-12 | 25% Pro users | Fork completion ≥70%; no quality complaints |
+| **Wave 4: Skill-Building** | Epistemic Fitness + Calibration Engine | Weeks 13-16 | All Pro users | 15-20% weekly fitness engagement |
+| **Wave 5: GA** | Full protocol as default Pro experience | Week 17+ | All Pro users | JRSR ≥32%; Pro conversion lift ≥5% |
+
+### 11.2 User Onboarding
+
+New users encountering PDBP for the first time need a gentle introduction:
+
+1. **First session:** Interactive tooltip tour explaining each Brief section ("This is a Sourced Finding — it's directly backed by the cited source")
+2. **Second session:** Prompt to try Calibrated Commit on one claim ("Want to test your intuition on this claim?")
+3. **Third session:** Research Debt ring appears with explanation ("This tracks how much verification you've done — it's for you, not a grade")
+4. **Week 2+:** Epistemic Fitness daily prompt appears in homepage ("Ready for today's 3-minute challenge?")
+5. **Always available:** "Show legacy essay" toggle — never force the format; let quality speak for itself
+
+### 11.3 Distribution Channels
+
+| Channel | Role |
+|---------|------|
+| **In-product** | Primary — Brief mode as default Pro format with essay toggle |
+| **Onboarding email series** | 5-part email explaining each PDBP solution and its purpose |
+| **Blog/PR** | "Why we changed the answer format" thought leadership piece |
+| **Enterprise sales** | PDBP as differentiated Pro/Enterprise feature (audit trails, team calibration reports) |
+| **Academic partnerships** | Epistemic Fitness for university research methods courses |
+
+---
+
+## 12. Competitive Moat Analysis
+
+### Why PDBP Is Hard to Copy
+
+| Moat Type | What It Is | Why It's Defensible |
+|-----------|-----------|-------------------|
+| **Insight Moat** | PEC as root cause (not hallucination) is a non-obvious framing that took weeks of epistemology research to identify | Competitors are still optimizing for "better answers" while we optimize for "better decisions" — different destination entirely |
+| **Design Moat** | Inline protocol (not sidebar) requires rebuilding the primary output artifact | Bolting a sidebar onto an essay doesn't break PEC; competitors would need to change their core answer format |
+| **Data Moat** | Calibration history creates a personalized, improving experience over time | The more sessions a user completes, the better their calibration trends, skill dimensions, and personalized insights become — switching costs increase with usage |
+| **Behavioral Moat** | Users trained via Epistemic Fitness develop genuine evaluation skills they associate with Perplexity | This creates brand loyalty rooted in personal growth, not just feature comparison — "I became a better researcher because of Perplexity" |
+
+**Execution distance:** The combination of PEC insight + protocol design + calibration training represents at least 12 months of execution distance from any competitor starting today. Individual pieces (claim labels, confidence ratings) are copyable. The coherent protocol tying pre-retrieval intent to post-retrieval calibration to long-term fitness is not.
+
+---
+
+## 13. Why PDBP Might Fail
 
 ### Risk 1: Friction kills usage (High likelihood, High impact)
 
