@@ -46,7 +46,19 @@ On the homepage, you’ll see four "Demo Queries". Each one of these is wired up
 
 ---
 
-## Step 3: Hit the Gym (Epistemic Fitness)
+## Step 3: Test the Calibrated Commit Gate
+This is one of the most important features of the protocol. Let's test the blind rating system.
+
+1. Click on any of the Demo Queries (e.g., Query 1).
+2. Scroll to the bottom of the Decision Brief and click the **"Calibrated Commit"** button.
+3. **The Rating Phase:** A modal will appear presenting 3 claims. Rate your confidence for each claim from 1 (Guess) to 5 (Certain). Notice that you cannot submit until all claims are rated.
+4. **The Reveal Phase:** Click "Submit Ratings & Reveal Evidence".
+5. The view will swap to show you the truth. Look for the yellow **"⚠ Overconfident"** badges if you rated an inference highly. Read the "Evidence check" to see exactly how your assumption mismatched the actual sources.
+6. Click "Acknowledge & Complete Protocol". Notice how your Research Debt meter turns green!
+
+---
+
+## Step 4: Hit the Gym (Epistemic Fitness)
 It's time to test the interactive gamified elements. 
 From the homepage, click on the **"Epistemic Fitness"** card (or use the link in the top right navigation).
 
@@ -60,7 +72,7 @@ From the homepage, click on the **"Epistemic Fitness"** card (or use the link in
 
 ---
 
-## Step 4: Check Your Stats (Calibration Engine)
+## Step 5: Check Your Stats (Calibration Engine)
 Now that you've completed a fitness session, let's look at your historical performance.
 Click the **"Calibration"** link in the top right corner.
 
@@ -77,6 +89,7 @@ If you can answer "Yes" to all of these, the prototype is perfectly complete and
 - [ ] Is the header text "Perplexity Decision Brief Protocol" centered on all pages?
 - [ ] Do the Protocol Modules on the homepage form a single straight line?
 - [ ] Does clicking each of the 4 demo queries load a unique dataset?
+- [ ] Did you test the **Calibrated Commit Gate** (rating claims 1-5 and revealing evidence)?
 - [ ] Is the search bar on the results page large, full-width, and easy to use?
 - [ ] Is the "Back to Home" button clearly visible on the results page?
 - [ ] Are all UI elements and SVGs (like the fitness checkmark) appropriately sized without blowing up?
