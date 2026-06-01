@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calibration Engine | PDBP</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <header class="header-nav">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-center relative">
+            <a href="index.html" class="flex items-center gap-3">
+                <svg class="h-6 w-6 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                </svg>
+                <span class="font-semibold text-base sm:text-lg text-foreground text-center">Perplexity Decision Brief Protocol</span>
+            </a>
+            <span class="absolute right-4 text-xs px-2 py-1 rounded-full badge-amber font-medium hidden sm:block">Calibration Engine</span>
+        </div>
+    </header>
+
+    <main class="flex-1 w-full max-w-4xl mx-auto px-4 py-8 space-y-8">
+        
+        <div class="text-center space-y-4">
+            <h1 class="text-3xl font-semibold text-foreground">AI Confidence Calibration</h1>
+            <p class="text-sm text-muted max-w-xl mx-auto">
+                Track how well you calibrate your confidence in AI-generated claims.
+                Over-trust leads to errors. Under-trust wastes the investment. The goal is appropriate reliance.
+            </p>
+        </div>
+
+        <!-- KPI cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div class="card text-center">
+                <p class="text-xs text-muted uppercase tracking-wide">Avg Calibration Delta</p>
+                <p class="text-3xl font-bold mt-2" id="kpi-delta">+0.0</p>
+                <p class="text-xs text-muted mt-1" id="kpi-delta-sub">Well calibrated</p>
+            </div>
+            <div class="card text-center">
+                <p class="text-xs text-muted uppercase tracking-wide">Overconfident Claims</p>
+                <p class="text-3xl font-bold text-foreground mt-2" id="kpi-over-pct">0%</p>
+                <p class="text-xs text-muted mt-1" id="kpi-over-sub">0/0 total</p>
+            </div>
+            <div class="card text-center">
+                <p class="text-xs text-muted uppercase tracking-wide">Sessions Analyzed</p>
+                <p class="text-3xl font-bold text-foreground mt-2" id="kpi-sessions">0</p>
+                <p class="text-xs text-muted mt-1">Last 7 days</p>
+            </div>
+            <div class="card text-center">
+                <p class="text-xs text-muted uppercase tracking-wide">Trend</p>
+                <p class="text-3xl font-bold mt-2" id="kpi-trend">→ Stable</p>
+                <p class="text-xs text-muted mt-1">Delta narrowing</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Calibration trend chart -->
+            <div class="card">
+                <h3 class="text-xs font-semibold text-foreground uppercase tracking-wide mb-2">Calibration Delta Over Time</h3>
+                <p class="text-[10px] text-muted mb-6">Positive = overconfident · Negative = underconfident · Zero = perfectly calibrated</p>
+                
+                <div class="relative h-48 border-b border-border mb-2" id="chart-container">
+                    <div class="absolute top-1/2 left-0 right-0 h-px bg-border"></div>
+                    <div class="absolute top-1/2 left-0 text-[10px] text-muted -translate-y-1/2 -ml-2">0</div>
+                    
+                    <div class="flex items-center justify-between h-full px-8 gap-4" id="chart-bars">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+                
+                <div class="flex justify-between text-xs text-muted">
+                    <span>Underconfident ↓</span>
+                    <span>Overconfident ↑</span>
+                </div>
+            </div>
+
+            <!-- Insights -->
+            <div class="card flex flex-col">
+                <h3 class="text-xs font-semibold text-foreground uppercase tracking-wide mb-4">Insights & Recommendations</h3>
+                <div class="space-y-4 flex-1">
+                    
+                    <div id="insight-warning" class="hidden rounded-lg border border-amber-300 bg-amber-50 px-4 py-3">
+                        <p class="font-semibold text-amber-800 text-sm">You tend to over-trust AI claims</p>
+                        <p class="text-xs text-amber-700 mt-2 leading-relaxed">
+                            Recommendation: Before trusting a claim rated 4 or 5, check whether it is factual (directly sourced) or inferential. Your overconfidence is highest on inferential claims.
+                        </p>
+                    </div>
+
+                    <div class="rounded-lg border border-border px-4 py-3">
+                        <p class="font-semibold text-foreground text-sm">Blind spot: Inferential claims</p>
+                        <p class="text-xs text-muted mt-2 leading-relaxed">
+                            You rate inferential claims higher on average than their source strength justifies. These claims combine multiple sources into a new conclusion — treat them with skepticism.
+                        </p>
+                    </div>
+
+                    <div class="rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-3">
+                        <p class="font-semibold text-emerald-800 text-sm">Strength: Normative claims</p>
+                        <p class="text-xs text-emerald-700 mt-2 leading-relaxed">
+                            You correctly identify and discount normative claims (value judgments). This is above the median calibration for Perplexity Pro users.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Session Detail Modal (Hidden) -->
+        <div id="session-detail" class="hidden rounded-xl border border-accent bg-accent-soft p-6">
+            <div class="flex items-start justify-between mb-6">
+                <div>
+                    <p class="text-xs font-bold text-accent uppercase tracking-wide mb-1">Session Detail</p>
+                    <h3 class="text-lg font-semibold text-foreground" id="detail-title">Query Title</h3>
+                    <p class="text-xs text-muted mt-1" id="detail-date">Date</p>
+                </div>
+                <button id="btn-close-detail" class="text-muted hover:text-foreground">✕</button>
+            </div>
+            
+            <div class="space-y-4" id="detail-claims">
+                <!-- Populated by JS -->
+            </div>
+            
+            <div class="mt-6 pt-4 border-t border-accent/20">
+                <p class="text-sm font-medium">Session delta: <strong id="detail-delta" class="text-accent">0.0</strong></p>
+            </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+            <a href="index.html" class="btn-outline py-3 px-6 text-base text-center">Back to Search</a>
+            <a href="fitness.html" class="btn-primary py-3 px-6 text-base text-center">Practice Calibration</a>
+        </div>
+
+    </main>
+
+    <footer class="py-4 text-center text-[10px] text-muted border-t mt-auto">
+        NL Graduation Project · HTML Prototype
+    </footer>
+
+    <script src="calibration.js"></script>
+</body>
+</html>

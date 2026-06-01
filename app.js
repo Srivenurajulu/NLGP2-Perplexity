@@ -78,6 +78,77 @@ function buildFdaBrief() {
     };
 }
 
+function buildCompareBrief() {
+    return {
+        stakes: "operational",
+        sourcedFindings: [
+            { text: "Perplexity enforces citation-first outputs; ChatGPT uses citations variably based on prompt.", type: "factual", sources: [1, 2] },
+            { text: "ChatGPT (GPT-4) outperforms on long-context synthesis and creative restructuring.", type: "factual", sources: [3] },
+            { text: "Perplexity Pro offers model switching (Claude, GPT-4, etc.) within the same search session.", type: "factual", sources: [4] },
+        ],
+        inferredConclusions: [
+            { text: "Perplexity is better suited for early-stage discovery and fact-verification.", type: "inferential", sources: [1, 4] },
+            { text: "ChatGPT is optimal for late-stage drafting and complex logic reasoning.", type: "inferential", sources: [3] },
+        ],
+        verificationDuties: [
+            { action: "Test both tools with the exact same 3 complex research prompts." },
+            { action: "Verify if Perplexity's 'Pro Search' fits your team's budget constraints [4]." }
+        ],
+        calibratedCommit: {
+            claims: [
+                { id: "bc1", text: "Perplexity is universally better for all research tasks." },
+                { id: "bc2", text: "ChatGPT hallucinates significantly more than Perplexity." },
+                { id: "bc3", text: "Perplexity allows you to use GPT-4." }
+            ],
+            reveals: [
+                { id: "bc1", type: "normative", sources: [1, 3], mismatch: "Subjective. Depends on discovery vs synthesis needs." },
+                { id: "bc2", type: "inferential", sources: [2], mismatch: "Both hallucinate; Perplexity's UI just anchors better to sources." },
+                { id: "bc3", type: "factual", sources: [4], mismatch: "Correct, available on the Pro tier." }
+            ]
+        }
+    };
+}
+
+function buildPmInterviewBrief() {
+    return {
+        stakes: "irreversible",
+        epistemicFork: {
+            conservative: {
+                title: "Standard execution focus",
+                summary: "Focus on frameworks (CIRCLES), standard metrics, and flawless execution history."
+            },
+            expansive: {
+                title: "Visionary product sense focus",
+                summary: "Focus on 0-to-1 ambiguity, bold bets, and ignoring standard frameworks for first-principles thinking."
+            }
+        },
+        sourcedFindings: [
+            { text: "Meta emphasizes execution and data-driven impact over visionary pitches.", type: "factual", sources: [1] },
+            { text: "Google PM loops index heavily on deep technical system design.", type: "factual", sources: [2] },
+            { text: "Amazon requires strict adherence to their Leadership Principles in the STAR format.", type: "factual", sources: [3] },
+        ],
+        inferredConclusions: [
+            { text: "Using a one-size-fits-all prep strategy across FAANG will likely fail.", type: "inferential", sources: [1, 2, 3] },
+        ],
+        verificationDuties: [
+            { action: "Determine exactly which FAANG company you are prioritizing." },
+            { action: "Prepare 5 distinct STAR stories mapped to specific company values." }
+        ],
+        calibratedCommit: {
+            claims: [
+                { id: "bc1", text: "Memorizing the CIRCLES framework guarantees passing the product sense round." },
+                { id: "bc2", text: "Amazon and Google have identical interview processes." },
+                { id: "bc3", text: "System design is critical for Google PMs." }
+            ],
+            reveals: [
+                { id: "bc1", type: "inferential", sources: [1, 2], mismatch: "Frameworks are table stakes; originality and domain depth are required to pass." },
+                { id: "bc2", type: "factual", sources: [2, 3], mismatch: "False. Amazon focuses on behavioral LPs; Google on technical design." },
+                { id: "bc3", type: "factual", sources: [2], mismatch: "Confirmed by multiple recent interview guides." }
+            ]
+        }
+    };
+}
+
 const mockResponses = {
     market: {
         query: DEMO_QUERIES[0],
@@ -89,6 +160,25 @@ const mockResponses = {
             { id: 5, title: "Trust in AI Search", domain: "cjr.org", snippet: "Citation accuracy concerns." },
         ],
         brief: buildMarketBrief()
+    },
+    compare: {
+        query: DEMO_QUERIES[1],
+        sources: [
+            { id: 1, title: "AI Search Tools 2026", domain: "techcrunch.com", snippet: "Perplexity's citation engine." },
+            { id: 2, title: "ChatGPT vs Perplexity", domain: "theverge.com", snippet: "Differing approaches to sourcing." },
+            { id: 3, title: "Generative AI Benchmarks", domain: "openai.com", snippet: "GPT-4 synthesis capabilities." },
+            { id: 4, title: "Perplexity Pro Features", domain: "perplexity.ai", snippet: "Model selection and pro search." }
+        ],
+        brief: buildCompareBrief()
+    },
+    pmInterview: {
+        query: DEMO_QUERIES[2],
+        sources: [
+            { id: 1, title: "Meta PM Interview Guide", domain: "igotanoffer.com", snippet: "Execution and data focus." },
+            { id: 2, title: "Google Technical PM", domain: "tryexponent.com", snippet: "System design expectations." },
+            { id: 3, title: "Amazon Leadership Principles", domain: "amazon.jobs", snippet: "STAR method behavioral questions." }
+        ],
+        brief: buildPmInterviewBrief()
     },
     fda: {
         query: DEMO_QUERIES[3],
@@ -262,8 +352,16 @@ function handleSearch(query) {
     headerSearchInput.value = query;
     
     // Select mock data
-    const isFda = query.toLowerCase().includes('fda') || query.toLowerCase().includes('medical');
-    currentData = isFda ? mockResponses.fda : mockResponses.market;
+    const qLower = query.toLowerCase();
+    if(qLower.includes('fda') || qLower.includes('medical')) {
+        currentData = mockResponses.fda;
+    } else if (qLower.includes('compare') || qLower.includes('chatgpt')) {
+        currentData = mockResponses.compare;
+    } else if (qLower.includes('senior pm') || qLower.includes('interview')) {
+        currentData = mockResponses.pmInterview;
+    } else {
+        currentData = mockResponses.market;
+    }
     
     // Reset state
     currentContract = null;

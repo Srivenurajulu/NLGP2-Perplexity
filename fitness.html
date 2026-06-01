@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Epistemic Fitness | PDBP</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <header class="header-nav">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-center relative">
+            <a href="index.html" class="flex items-center gap-3">
+                <svg class="h-6 w-6 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                </svg>
+                <span class="font-semibold text-base sm:text-lg text-foreground text-center">Perplexity Decision Brief Protocol</span>
+            </a>
+            <span class="absolute right-4 text-xs px-2 py-1 rounded-full badge-violet font-medium hidden sm:block">Epistemic Fitness</span>
+        </div>
+    </header>
+
+    <main class="flex-1 w-full max-w-4xl mx-auto px-4 py-8">
+        
+        <!-- Welcome / Dashboard View -->
+        <div id="view-dashboard" class="space-y-8">
+            <div class="text-center space-y-4">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-1 shadow-lg mb-2">
+                    <svg class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-semibold text-foreground">Epistemic Fitness</h1>
+                <p class="text-sm text-muted max-w-md mx-auto">
+                    Train your ability to evaluate AI-generated claims. Three minutes per day.
+                    Identify claim types, calibrate confidence, detect gaps, and evaluate sources.
+                </p>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="card text-center">
+                    <p class="text-xs text-muted uppercase tracking-wide">Overall Accuracy</p>
+                    <p class="text-2xl font-bold text-foreground mt-2" id="stat-accuracy">0%</p>
+                    <p class="text-xs text-muted mt-1" id="stat-correct">0/0 correct</p>
+                </div>
+                <div class="card text-center">
+                    <p class="text-xs text-muted uppercase tracking-wide">Current Streak</p>
+                    <p class="text-2xl font-bold text-foreground mt-2" id="stat-streak">0</p>
+                    <p class="text-xs text-muted mt-1" id="stat-best-streak">Best: 0 days</p>
+                </div>
+                <div class="card text-center">
+                    <p class="text-xs text-muted uppercase tracking-wide">Sessions</p>
+                    <p class="text-2xl font-bold text-foreground mt-2" id="stat-sessions">0</p>
+                    <p class="text-xs text-muted mt-1">Last 30 days</p>
+                </div>
+                <div class="card text-center">
+                    <p class="text-xs text-muted uppercase tracking-wide">Skill Level</p>
+                    <p class="text-2xl font-bold text-foreground mt-2" id="stat-level">Beginner</p>
+                    <p class="text-xs text-muted mt-1" id="stat-level-sub">Keep practicing</p>
+                </div>
+            </div>
+
+            <button id="btn-start" class="w-full py-4 rounded-xl bg-gradient-1 text-white font-semibold text-base hover:opacity-90 transition-opacity shadow-lg">
+                Start Today's Session (5 challenges, ~3 min)
+            </button>
+        </div>
+
+        <!-- Active Session View -->
+        <div id="view-session" class="hidden max-w-2xl mx-auto space-y-6">
+            <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                    <span id="challenge-badge" class="text-[10px] font-medium px-2 py-0.5 rounded-full border">Type</span>
+                    <span id="challenge-diff" class="text-xs text-muted capitalize">Difficulty</span>
+                </div>
+                <span id="challenge-progress" class="text-sm text-muted font-medium">1 / 5</span>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="flex gap-2 mb-6" id="progress-dots">
+                <!-- populated by JS -->
+            </div>
+
+            <div class="card bg-surface">
+                <p id="challenge-prompt" class="text-base text-foreground font-medium leading-relaxed"></p>
+            </div>
+
+            <div class="space-y-4" id="challenge-options">
+                <!-- populated by JS -->
+            </div>
+
+            <div id="challenge-explanation" class="hidden rounded-xl border border-accent bg-accent-soft p-5 space-y-3 mt-6">
+                <p id="expl-title" class="text-sm font-semibold text-accent"></p>
+                <p id="expl-text" class="text-base text-foreground leading-relaxed"></p>
+                <button id="btn-next" class="mt-4 w-full py-3 rounded-xl bg-accent text-white text-base font-semibold hover:opacity-90">
+                    Next Challenge
+                </button>
+            </div>
+        </div>
+
+        <!-- Session Complete View -->
+        <div id="view-complete" class="hidden text-center space-y-8 py-12 max-w-lg mx-auto">
+            <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-emerald-500 shadow-lg">
+                <svg class="w-10 h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+
+            <div>
+                <h2 class="text-2xl font-semibold text-foreground">Session Complete</h2>
+                <p id="result-score" class="text-4xl font-bold text-accent mt-4">0/5</p>
+                <p id="result-pct" class="text-base text-muted mt-2">0% accuracy</p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+                <button id="btn-practice-again" class="btn-primary py-3 px-6 text-base">Practice Again</button>
+                <a href="index.html" class="btn-outline py-3 px-6 text-base">Back to Search</a>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="py-4 text-center text-[10px] text-muted border-t mt-auto">
+        NL Graduation Project · HTML Prototype
+    </footer>
+
+    <script src="fitness.js"></script>
+</body>
+</html>
