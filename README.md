@@ -49,51 +49,39 @@ See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) Section 7 for full scoring:
 
 ## Quick Start
 
+The PDBP interface is now built as a lightweight, lightning-fast static HTML/CSS/JS application that runs entirely in the browser, making it perfect for direct GitHub Pages hosting.
+
 ```bash
-cd frontend
-npm install
-npm run dev
+# Simply run a local web server from the project root
+python3 -m http.server 8000
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
+Open [http://localhost:8000](http://localhost:8000)
 
 ### Demo Walkthrough
 
+**For comprehensive, step-by-step testing instructions, please refer to the [`Final Test.md`](Final Test.md) guide included in this repository.**
+
 1. Click **"Latest FDA guidance on AI medical devices"** (irreversible stakes)  
-2. Complete **Intent Contract** modal  
-3. Review **Decision Brief** sections (not a single essay)
-4. Observe **Research Debt Meter** tracking your progress in the sidebar
-5. Note **Cognitive Load Badge** adapting to your reading pace
-6. Complete **Epistemic Fork** (conservative vs expansive)  
-7. Open **Calibrated Commit** → rate claims blind → reveal → write rationale  
-8. Click citation badges to inspect sources (Research Debt updates live)
-9. Visit **Epistemic Fitness** (`/fitness`) for daily judgment challenges
-10. Visit **Calibration Engine** (`/calibration`) for confidence trend analysis
+2. Complete the **Intent Contract** modal  
+3. Review the **Decision Brief** output (sourced findings vs inferred conclusions)
+4. Observe the **Research Debt Meter** tracking your verification duties
+5. Complete the **Epistemic Fork** (conservative vs expansive)  
+6. Open **Calibrated Commit** → rate claims blind → reveal → view mismatch analysis
+7. Visit **Epistemic Fitness** (`/fitness.html`) for daily judgment challenges
+8. Visit **Calibration Engine** (`/calibration.html`) for confidence trend analysis
 
 ## Project Structure
 
 ```
-docs/ARCHITECTURE.md          # Full product architecture (v3, award-grade depth)
-docs/PROBLEM_STATEMENT.md     # Problem statement, 5 solutions rationale, risk assessment
-docs/solv3.md                 # Solution v3 design narrative
+docs/ARCHITECTURE.md          # Full product architecture
+docs/PROBLEM_STATEMENT.md     # Problem statement, solution rationale, risk assessment
 research/survey-summary.md    # User research + PDBP mapping
-frontend/                     # Perplexity UI + PDBP interactive demo
-  app/
-    page.tsx                  # Home page with all protocol modules
-    search/[query]/page.tsx   # Unified Protocol view (all 5 solutions inline)
-    fitness/page.tsx          # Epistemic Fitness trainer (Solution 5)
-    calibration/page.tsx      # AI Confidence Calibration Engine
-  components/
-    pdbp/
-      UnifiedProtocol.tsx          # 5-phase inline orchestrator (v2/v3)
-      PhaseProgressBar.tsx         # Phase progress + collapsed cards
-      SessionSummary.tsx           # Phase 5: REFLECT + mini fitness
-      IntentContractModal.tsx      # Solution 1: Intent Contract
-      EpistemicForkSelector.tsx    # Solution 2: Epistemic Fork
-      CalibratedCommitGate.tsx     # Solution 3: Calibrated Commit
-      ResearchDebtMeter.tsx        # Solution 4: Research Debt Quantifier
-      CognitiveLoadMonitor.tsx     # Cognitive Load Adaptive Interface
-      DecisionBriefView.tsx        # Decision Brief primary output
+index.html / app.js           # Home page, Unified Protocol, and Decision Briefs
+fitness.html / fitness.js     # Epistemic Fitness trainer (Solution 5)
+calibration.html / cal...js   # AI Confidence Calibration Engine dashboard
+styles.css                    # Vanilla CSS translated from Tailwind design system
+Final Test.md                 # End-to-end testing guide
 README.md
 ```
 
